@@ -1,19 +1,27 @@
-ext {
-    // 很多app都会有自己的打包开关，来区分线上包和测试包，可以通过给applyPlugin赋值来区分测试包和线上包
-    // 线上包不会接入DoraemonKit，测试包会自动接入
-    applyPlugin = true
-}
-if (applyPlugin) {
-    // 引用插件，插件会在编译期把DoraemonKit.install方法插入Application中，前提是用户必须实现自己的Application
-    apply plugin: 'android-aspectjx'
+def runType = rootProject.ext.publish_config["run_type"]
+if (runType == 0) {
+    // 引用插件
+    apply plugin: 'com.didi.dokit.debug'
     // 这里引用正常库
     dependencies {
-        implementation project(":doraemonkit")
-        implementation project(":doraemonkit-aop")
+        //外部平台依赖
+        debugImplementation project(":dokit")
+        debugImplementation project(":dokit-mc")
+        debugImplementation project(":dokit-ft")
+        debugImplementation project(":dokit-weex")
+//        debugImplementation project(":dokit-rpc")
+//        debugImplementation project(":dokit-rpc-mc")
+        releaseImplementation project(":dokit-no-op")
     }
-} else {
+} else if (runType == 1) {
+    apply plugin: 'com.didi.dokit'
     // 引用no-op的库
     dependencies {
-        implementation project(":doraemonkit-no-op")
+        //新版线上包
+        debugImplementation "io.github.didi.dokit:dokitx:${rootProject.ext.publish_config["version"]}"
+        debugImplementation "io.github.didi.dokit:dokitx-ft:${rootProject.ext.publish_config["version"]}"
+        debugImplementation "io.github.didi.dokit:dokitx-mc:${rootProject.ext.publish_config["version"]}"
+        debugImplementation "io.github.didi.dokit:dokitx-weex:${rootProject.ext.publish_config["version"]}"
+        releaseImplementation "io.github.didi.dokit:dokitx-no-op:${rootProject.ext.publish_config["version"]}"
     }
 }

@@ -12,7 +12,7 @@
 #define kUnicodeReadable 1
 #if kUnicodeReadable
 
-@implementation NSDictionary (UnicodeReadable)
+@implementation NSDictionary (DoraemonUnicodeReadable)
 
 - (NSString *)descriptionWithLocale:(id)locale indent:(NSUInteger)level {
     NSMutableString *desc = [NSMutableString string];
@@ -81,7 +81,7 @@
 @end
 
 
-@implementation NSArray (UnicodeReadable)
+@implementation NSArray (DoraemonUnicodeReadable)
 
 - (NSString *)descriptionWithLocale:(id)locale indent:(NSUInteger)level {
     NSMutableString *desc = [NSMutableString string];
@@ -141,13 +141,19 @@
     
     [desc appendFormat:@"%@)", tab];
     
-    return [desc stringByReplacingOccurrencesOfString:@",\n" withString:@"\n" options:NSBackwardsSearch range:[desc rangeOfString:@",\n" options:NSBackwardsSearch]];
+    NSRange range = [desc rangeOfString:@",\n" options:NSBackwardsSearch];
+    
+    if (range.location == NSNotFound) {
+        return desc;
+    } else {
+        return [desc stringByReplacingOccurrencesOfString:@",\n" withString:@"\n" options:NSBackwardsSearch range:range];
+    }
 }
 
 @end
 
 
-@implementation NSSet (UnicodeReadable)
+@implementation NSSet (DoraemonUnicodeReadable)
 
 - (NSString *)descriptionWithLocale:(id)locale indent:(NSUInteger)level {
     NSMutableString *desc = [NSMutableString string];
@@ -207,7 +213,13 @@
     
     [desc appendFormat:@"%@)}", tab];
     
-    return [desc stringByReplacingOccurrencesOfString:@",\n" withString:@"\n" options:NSBackwardsSearch range:[desc rangeOfString:@",\n" options:NSBackwardsSearch]];
+    NSRange range = [desc rangeOfString:@",\n" options:NSBackwardsSearch];
+    
+    if (range.location == NSNotFound) {
+        return desc;
+    } else {
+        return [desc stringByReplacingOccurrencesOfString:@",\n" withString:@"\n" options:NSBackwardsSearch range:range];
+    }
 }
 
 @end
